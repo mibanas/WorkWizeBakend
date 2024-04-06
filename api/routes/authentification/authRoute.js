@@ -6,7 +6,7 @@ const checkUser = require('../../middlewares/authentification/checkUser')
 const validateRegister = require('../../middlewares/authentification/validateRegister')
 const validateUuid = require('../../middlewares/authentification/validateUuid')
 const validateLogin = require('../../middlewares/authentification/validateLogin')
-
+const fakeLoginAttempt = require('../../middlewares/authentification/loginAttempt')
 
 // Controllers
 const Authentification = require('../../controllers/authentification/authController')
@@ -14,7 +14,7 @@ const Authentification = require('../../controllers/authentification/authControl
 // Routes 
 routes.post('/register', checkUser ,validateRegister, Authentification.register)
 routes.post('/validate/:uuid', validateUuid, Authentification.validate)
-routes.post('/login', validateLogin, Authentification.login)
+routes.post('/login', validateLogin, fakeLoginAttempt, Authentification.login)
 
 
 module.exports = routes
