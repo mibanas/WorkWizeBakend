@@ -58,9 +58,6 @@ const fakeLoginAttempt = async (req, res, next) => {
 
         // Passer l'utilisateur à la prochaine middleware
         req.user = user;
-        // req.user = { ...req.user, ...user };
-
-        console.log('here', req.body.password);
 
         // Continuer avec la tentative de connexion
         next();
