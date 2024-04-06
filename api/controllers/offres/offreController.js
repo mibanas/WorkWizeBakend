@@ -39,7 +39,7 @@ class offreController {
         try {
             const offer = await offreModel.findById(id)
                 .populate('company')
-                // .populate('recruiters')
+                .populate('recruiters')
             
             if (!offer) {
                 return res.status(404).json({
@@ -123,9 +123,7 @@ class offreController {
             });
         }
     }
-
-
-    
+  
     // Méthode pour récupérer toutes les offres d'emploi avec pagination et filtrage
     getOffers = async (req, res) => {
         const { page, limit } = req.query;
@@ -142,6 +140,7 @@ class offreController {
                 .skip(skip)
                 .limit(limits)
                 .populate('company')
+                .populate('recruiters')
                 .exec()
             
             return res.status(200).json({

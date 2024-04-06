@@ -17,11 +17,13 @@ app.use(morgan('dev'));
 const authRoutes = require('./api/routes/authentification/authRoute')
 const offreRoutes = require('./api/routes/offres/offreRoute')
 const companyRoutes = require('./api/routes/offres/companyRoute')
+const recruiterRoutes = require('./api/routes/offres/recruiterRoute')
 
 // liste of routes 
 app.use(`${API_VERSION}/auth`, authRoutes)
 app.use(`${API_VERSION}/offre`, offreRoutes)
 app.use(`${API_VERSION}/company`, companyRoutes)
+app.use(`${API_VERSION}/recruiter`, recruiterRoutes)
 
 
 module.exports = app
