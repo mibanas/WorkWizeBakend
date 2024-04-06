@@ -3,7 +3,7 @@ const routes = express.Router()
 
 // middlewares
 const validateAddOffer = require('../../middlewares/offres/offreMiddleware')
-const authMiddleware = require('../../middlewares/offres/authMiddleware')
+const authMiddleware = require('../../middlewares/shared/authMiddleware')
 
 // // Controllers
 const offreController = require('../../controllers/offres/offreController')

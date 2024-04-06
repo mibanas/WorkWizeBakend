@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // middlewares
-const authMiddleware = require('../../middlewares/offres/authMiddleware')
+const authMiddleware = require('../../middlewares/shared/authMiddleware')
 
 // Controllers
 const companyController = require('../../controllers/offres/companyController')
