@@ -94,7 +94,60 @@ class Authentification {
     }
 
     login = async (req, res) => {
+        const { password } = req.body
+        const user = req.user
+        try {
+                        
+            // Vérifier le mot de passe
+            if (!(await bcrypt.compare(password, user.password))) {
+                // Incrémenter le nombre de tentatives de connexion
+                await User.findByIdAndUpdate(user._id, { 
+                    signup_attempts: user.signup_attempts + 1
+                });
+
+                return res.status(401).json({ 
+                    success: false, 
+                    message: 'Email or password is incorrect' 
+                });
+            }
+    
+            // Générer un token JWT
+            const accessToken = jwt.sign({ 
+                id: user._id, 
+                email: user.email 
+            }, process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '1h' })
+    
+            // Générer un refresh token JWT
+            const refreshToken = jwt.sign({ 
+                id: user._id, 
+                email: user.email 
+            }, process.env.REFRESH_TOKEN_SECRET_KEY, { expiresIn: '7d' })
+    
+            // Ajouter le refresh token à la liste des tokens de l'utilisateur et mettre à jour en base
+            const updatedUser = await User.findByIdAndUpdate(user._id, { 
+                    accessToken: accessToken, 
+                    refreshToken: refreshToken,
+                    signup_attempts: 0, 
+                    lockout_until: null
+                } 
+            , { new: true });
+                
+            return res.status(200).json({ 
+                success: true, 
+                message: 'Authentication successful', 
+                token: accessToken,
+                refreshToken: refreshToken,
+                user : updatedUser
+            })
+        } catch (error) {
+            console.error('Error during login:', error)
+            return res.status(500).json({ 
+                success: false, 
+                error: 'Internal server error' 
+            })
+        }
     }
+    
 }
 
 module.exports = new Authentification()
