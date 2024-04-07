@@ -1,5 +1,8 @@
 const candidatureModel = require('../../models/condidature/condidatureModel')
 const OfferStatus = require('../../utils/offreStatus')
+const relanceModel = require('../../models/relance/relanceModel')
+const offreModel = require('../../models/offres/offreModel')
+const statusModel = require('../../models/status/statusModel')
 
 // Créer une candidature
 exports.createCandidature = async (req, res) => {
@@ -7,19 +10,44 @@ exports.createCandidature = async (req, res) => {
     const offreId = req.params.id
     try {
 
+        const offre = await offreModel.findById(offreId)
+            .populate('company')
+            .populate('status')
+            .populate('recruiters')
+
+        // return res.json(offre.status._id)
         const condidatureData = {}
         if (modeEnvoi) condidatureData.modeEnvoi = modeEnvoi
-        if (dateCandidature) condidatureData.dateCandidature = dateCandidature
+        if (dateCandidature) {
+            condidatureData.dateCandidature = new Date(dateCandidature)
+        }
+        else {
+            condidatureData.dateCandidature = new Date()
+        }
         if (cv) condidatureData.cv = cv
         if (lettreMotivation) condidatureData.lettreMotivation = lettreMotivation
         condidatureData.status = OfferStatus.CANDIDATURE_SOUMISE
         if (offreId) condidatureData.offreId = offreId
 
         const newCandidature = await candidatureModel.create(condidatureData)
+
+        const udpateStatus = await statusModel.findByIdAndUpdate(offre.status._id, {
+            name : OfferStatus.CANDIDATURE_SOUMISE
+        })
+
+        const addRelance = await relanceModel.create({
+            idOffre : offreId,
+            dateRelance : condidatureData.dateCandidature + 7,
+            status : OfferStatus.RELANCE_EN_ATTENTE
+        })
+
+
         return res.status(201).json({
             success: true,
             message: 'Candidature créée avec succès',
-            data: newCandidature
+            data: newCandidature,
+            relance : addRelance,
+            newStatus : udpateStatus
         })
     } catch (error) {
         console.error('Erreur lors de la création de la candidature :', error);

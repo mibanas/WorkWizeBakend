@@ -1,6 +1,6 @@
 const offreModel = require('../../models/offres/offreModel')
 const OfferStatus = require('../../utils/offreStatus')
-
+const statusModel = require('../../models/status/statusModel')
 
 class offreController {
     addOffer = async (req, res) => {
@@ -8,6 +8,11 @@ class offreController {
         const { title, description, link, publicationDate, source } = req.body;
     
         try {
+
+            const addStatus = await statusModel.create({
+                name : OfferStatus.PREPARATION
+            })
+
             const newOffer = await offreModel.create({
                 userId : req.user.id,
                 title,
@@ -15,7 +20,7 @@ class offreController {
                 link,
                 publicationDate,
                 source,
-                status : OfferStatus.PREPARATION
+                status : addStatus._id
             });
     
             return res.status(201).json({
@@ -40,6 +45,7 @@ class offreController {
             const offer = await offreModel.findById(id)
                 .populate('company')
                 .populate('recruiters')
+                .populate('status')
             
             if (!offer) {
                 return res.status(404).json({
@@ -140,6 +146,7 @@ class offreController {
                 .skip(skip)
                 .limit(limits)
                 .populate('company')
+                .populate('status')
                 .populate('recruiters')
                 .exec()
             

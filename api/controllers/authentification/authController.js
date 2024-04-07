@@ -115,7 +115,7 @@ class Authentification {
             const accessToken = jwt.sign({ 
                 id: user._id, 
                 email: user.email 
-            }, process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '1h' })
+            }, process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '7d' })
     
             // Générer un refresh token JWT
             const refreshToken = jwt.sign({ 
