@@ -1,5 +1,4 @@
 const { Schema, model } = require('mongoose');
-const OfferStatus = require('../../utils/offreStatus')
 
 // Modèle d'offre d'emploi
 const jobOfferSchema = new Schema({
@@ -43,10 +42,11 @@ const jobOfferSchema = new Schema({
         default : false 
     },
     status: { 
-        type: String, 
-        enum: Object.values(OfferStatus), 
+        type: Schema.Types.ObjectId, 
+        ref: 'Status', 
         required: true 
     }
+
 })
 
 const JobOffer = model('JobOffer', jobOfferSchema)

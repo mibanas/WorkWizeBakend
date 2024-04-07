@@ -1,7 +1,7 @@
 const OfferStatus = {
     PREPARATION: 'Préparation',
     CANDIDATURE_SOUMISE: 'Candidature soumise',
-    CANDIDATURE_RECUE: 'Candidature reçue',
+    RELANCE_EN_ATTENTE: 'Relance en attente',
     RELANCE_APRES_SOUMISSION: 'Relance après soumission',
     PRE_SELECTIONNEE: 'Pré-sélectionné(e)',
     ENTRETIENS: 'Entretien(s)',
