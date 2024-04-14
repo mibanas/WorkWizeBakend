@@ -9,6 +9,8 @@ const addOfferSchema = Joi.object({
 });
 
 const validateAddOffer = (req, res, next) => {
+    console.log('pppp');
+
     const { error } = addOfferSchema.validate(req.body);
     if (error) {
         return res.status(400).json({
@@ -16,6 +18,7 @@ const validateAddOffer = (req, res, next) => {
             error: error.details[0].message
         });
     }
+    console.log('icic');
     next();
 };
 

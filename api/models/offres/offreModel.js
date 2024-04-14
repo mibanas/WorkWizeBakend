@@ -47,7 +47,7 @@ const jobOfferSchema = new Schema({
         required: true 
     }
 
-})
+}, { timestamps: true })
 
 const JobOffer = model('JobOffer', jobOfferSchema)
 module.exports = JobOffer

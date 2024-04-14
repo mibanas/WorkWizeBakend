@@ -2,15 +2,26 @@ const offreModel = require('../../models/offres/offreModel')
 const OfferStatus = require('../../utils/offreStatus')
 const statusModel = require('../../models/status/statusModel')
 
+const OfferStatusNum = {
+    0: 'Préparation',
+    1: 'Candidature soumise',
+    2: 'Relance en attente',
+    3: 'Relance après soumission',
+    4: 'Entretien(s)',
+    5: 'Remerciement après entretien',
+    6: 'En attente de décision',
+    7: 'Résultat final'
+  };
+
 class offreController {
     addOffer = async (req, res) => {
-
         const { title, description, link, publicationDate, source } = req.body;
     
         try {
 
             const addStatus = await statusModel.create({
-                name : OfferStatus.PREPARATION
+                name : OfferStatus.PREPARATION,
+                date : new Date()
             })
 
             const newOffer = await offreModel.create({
@@ -138,7 +149,6 @@ class offreController {
             const limits = limit;
             const skip = (page - 1) * limit
   
-    
             const offers = await offreModel.find({ 
                 isDeleted : false,
                 userId : userId
@@ -146,13 +156,17 @@ class offreController {
                 .skip(skip)
                 .limit(limits)
                 .populate('company')
-                .populate('status')
+                .populate('status') 
                 .populate('recruiters')
                 .exec()
+            console.log("🚀 ~ offreController ~ getOffers= ~ offers:", offers)
+            
+            const totalOffers = await offreModel.countDocuments();
             
             return res.status(200).json({
                 success: true,
-                data: offers
+                data: offers,
+                count: totalOffers
             });
         } catch (error) {
             console.error('Erreur lors de la récupération des offres d\'emploi:', error);
@@ -163,6 +177,50 @@ class offreController {
         }
     }
     
-}
+    changeStatus = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const status = await statusModel.findById(id);
+            if (!status) {
+                return res.status(404).json({ 
+                    success: false,
+                    message: 'Statut non trouvé' 
+                });
+            }
+            
+            let currentStatusIndex = Object.values(OfferStatusNum).indexOf(status.name);
+            if (currentStatusIndex === -1) {
+                return res.status(500).json({ 
+                    success: false,
+                    message: 'Statut invalide' 
+                });
+            }
+            
+            if (currentStatusIndex === 7) {
+                return res.status(400).json({ 
+                    success: false,
+                    message: 'Impossible de changer le statut à partir de "Résultat final"' 
+                });
+            }
+    
+            const newStatusName = OfferStatusNum[currentStatusIndex + 1];
+    
+            const updatedStatus = await statusModel.findByIdAndUpdate(id, {
+                name: newStatusName
+            }, { new: true });
+    
+            res.status(200).json({
+                success: true,
+                message: 'Statut mis à jour avec succès',
+                data: updatedStatus
+            });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    }
+    
+};
+
+
 
 module.exports = new offreController()

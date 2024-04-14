@@ -13,7 +13,7 @@ const Authentification = require('../../controllers/authentification/authControl
 
 // Routes 
 routes.post('/register', checkUser ,validateRegister, Authentification.register)
-routes.post('/validate/:uuid', validateUuid, Authentification.validate)
+routes.get('/validate/:uuid', validateUuid, Authentification.validate)
 routes.post('/login', validateLogin, fakeLoginAttempt, Authentification.login)
 
 

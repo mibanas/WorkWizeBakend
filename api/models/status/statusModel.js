@@ -6,8 +6,11 @@ const statusSchema = new mongoose.Schema({
         type: String,
         required: true,
         enum: Object.values(OfferStatus), 
-        unique: true,
-    }
+    },
+    date: {
+        type: Date,
+        required: false
+    },
 });
 
 const Status = mongoose.model('Status', statusSchema);
