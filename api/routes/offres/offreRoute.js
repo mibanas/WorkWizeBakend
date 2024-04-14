@@ -12,6 +12,7 @@ const offreController = require('../../controllers/offres/offreController')
 // // Routes 
 routes.get('/all', authMiddleware, offreController.getOffers);
 routes.post('/', authMiddleware, validateAddOffer, offreController.addOffer)
+routes.patch('/status/:id', authMiddleware, offreController.changeStatus)
 routes.get('/:id', authMiddleware, offreController.getOfferById)
 routes.patch('/:id', authMiddleware, offreController.updateOffer)
 routes.post('/delete/:id', authMiddleware, offreController.deleteOffer)

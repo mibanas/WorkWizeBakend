@@ -8,7 +8,6 @@ require('dotenv').config()
 class Authentification {
     register = async (req, res) => {
         const { first_name, last_name, email, password } = req.body;
-        
         try {
             const hashPassword = await bcrypt.hash(password, 10)
             const newUser = await User.create({ 
@@ -19,7 +18,7 @@ class Authentification {
                 uuid: uuidv4()
             })
 
-            const activationLink = `http://localhost:${process.env.PORT}/api/v1/auth/validate/${newUser.uuid}`
+            const activationLink = `http://localhost:3000/validate/${newUser.uuid}`
             
             let transporter = nodemailer.createTransport({
                 service: 'Gmail',
@@ -32,7 +31,7 @@ class Authentification {
             // Envoyer un e-mail de notification
             const sendMail = await transporter.sendMail({
                 from: process.env.EMAIL,
-                to: process.env.EMAIL,
+                to: email,
                 subject: 'Confirmation d\'inscription',
                 text: `Bonjour ${first_name}, cliquez sur le lien suivant pour activer votre compte : ${activationLink}`
             })
@@ -52,48 +51,62 @@ class Authentification {
     }
 
     validate = async (req ,res) => {
+        
         const uuid = req.params.uuid
 
         try {
             const user = await User.findOne({ uuid : uuid });
+            console.log("🚀 ~ Authentification ~ validate= ~ user:", "1")
 
             if (!user) {
                 return res.status(400).json({
                 success: false,
-                error: 'Invalid uuid or activation link'
+                message: 'Invalid uuid or activation link'
               })
             }
-        
+            
+            console.log("🚀 ~ Authentification ~ validate= ~ user:", "2")
+
             // Check if user is already activated (optional)
             if (user.compte_active) {
+                console.log("🚀 ~ Authentification ~ validate= ~ user.compte_active:", user.compte_active)
+                
                 return res.status(400).json({
                     success: false,
-                    error: 'User account already activated'
+                    message: 'User account already activated'
               })
             }
-        
+            
+            console.log("🚀 ~ Authentification ~ validate= ~ user:", "3")
+
             // Update user to activated state
             const updatedUser = await User.findByIdAndUpdate(
                 user._id,
                 { compte_active: true },
                 { new: true }
             )
+            // console.log("🚀 ~ Authentification ~ validate= ~ updatedUser:", updatedUser)
+            console.log("🚀 ~ Authentification ~ validate= ~ user:", "4")
         
             return res.status(200).json({
                 success: true,
                 message: 'Account activation successful',
                 user: updatedUser
             })
+
+
           } catch (error) {
                 console.error("🚀 ~ eror during account validation:", error.message)
                 return res.status(500).json({
                     success: false,
-                    error: 'Internal server error'
+                    message: 'Internal server error'
             })
           }
     }
 
     login = async (req, res) => {
+        console.log('login');
+
         const { password } = req.body
         const user = req.user
         try {
@@ -107,7 +120,7 @@ class Authentification {
 
                 return res.status(401).json({ 
                     success: false, 
-                    message: 'Email or password is incorrect' 
+                    error: 'Email or password is incorrect' 
                 });
             }
     

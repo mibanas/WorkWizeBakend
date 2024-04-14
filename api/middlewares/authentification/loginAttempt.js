@@ -1,6 +1,8 @@
 const User = require('../../models/authentification/userModel')
 
 const fakeLoginAttempt = async (req, res, next) => {
+    console.log('fakeLoginAttempt');
+
     const { email } = req.body;
 
     try {
@@ -11,15 +13,18 @@ const fakeLoginAttempt = async (req, res, next) => {
         if (!user) {
             return res.status(401).json({ 
                 success: false, 
-                message: 'Email or password is incorrect' 
+                error: 'Email or password is incorrect' 
             });
         }
+
+        console.log("🚀 ~ fakeLoginAttempt ~ email:", email)
+
 
         // Vérifier si Le compte est activé
         if (!user.compte_active) {
             return res.status(401).json({ 
                 success: false, 
-                message: 'Votre compte est inactif' 
+                error: 'Votre compte est inactif check your email to activated' 
             });
         }
 
@@ -31,7 +36,7 @@ const fakeLoginAttempt = async (req, res, next) => {
                 const remainingMinutes = Math.ceil(remainingTime / (1000 * 60));
                 return res.status(401).json({ 
                     success: false, 
-                    message: `Account locked. Please try again in ${remainingMinutes} minutes.` 
+                    error: `Account locked. Please try again in ${remainingMinutes} minutes.` 
                 });
             }
         }
@@ -49,7 +54,7 @@ const fakeLoginAttempt = async (req, res, next) => {
 
             return res.status(401).json({ 
                 success: false, 
-                message: 'Too many login attempts. Account locked for 30 minutes.' 
+                error: 'Too many login attempts. Account locked for 30 minutes.' 
             });
         }
 
@@ -60,6 +65,7 @@ const fakeLoginAttempt = async (req, res, next) => {
         req.user = user;
 
         // Continuer avec la tentative de connexion
+
         next();
     } catch (error) {
         console.error('Error during fake login attempt:', error);
