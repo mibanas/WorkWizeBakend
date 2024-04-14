@@ -31,7 +31,7 @@ class Authentification {
             // Envoyer un e-mail de notification
             const sendMail = await transporter.sendMail({
                 from: process.env.EMAIL,
-                to: process.env.EMAIL,
+                to: email,
                 subject: 'Confirmation d\'inscription',
                 text: `Bonjour ${first_name}, cliquez sur le lien suivant pour activer votre compte : ${activationLink}`
             })

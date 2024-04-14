@@ -180,6 +180,7 @@ class offreController {
     changeStatus = async (req, res) => {
         try {
             const { id } = req.params;
+            const { date } = req.body;
             const status = await statusModel.findById(id);
             if (!status) {
                 return res.status(404).json({ 
@@ -206,7 +207,8 @@ class offreController {
             const newStatusName = OfferStatusNum[currentStatusIndex + 1];
     
             const updatedStatus = await statusModel.findByIdAndUpdate(id, {
-                name: newStatusName
+                name: newStatusName,
+                date : date
             }, { new: true });
     
             res.status(200).json({
