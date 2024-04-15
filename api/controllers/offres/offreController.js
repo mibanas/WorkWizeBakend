@@ -40,7 +40,7 @@ class offreController {
                 data: newOffer
             });
         } catch (error) {
-            console.error('Erreur lors de l\'ajout de l\'offre d\'emploi:', error);
+            // console.error('Erreur lors de l\'ajout de l\'offre d\'emploi:', error);
             return res.status(500).json({
                 success: false,
                 erreur : error.message,
