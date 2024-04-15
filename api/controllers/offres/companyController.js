@@ -38,17 +38,8 @@ class CompanyController {
     
 
     async getCompanies(req, res) {
-        const { page, limit } = req.query;
         try {
-            const limits = limit;
-            const skip = (page - 1) * limit
-  
-    
-            const companies = await companyModel.find({ isDeleted : false })
-                .skip(skip)
-                .limit(limits)
-                .exec()
-            
+            const companies = await companyModel.find({ isDeleted : false })     
             return res.status(200).json({
                 success: true,
                 data: companies
